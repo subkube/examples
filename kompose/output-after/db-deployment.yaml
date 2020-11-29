@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert --out output/
+    kompose.version: 1.22.0 (HEAD)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: db
+  name: db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: db
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert --out output/
+        kompose.version: 1.22.0 (HEAD)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: db
+    spec:
+      containers:
+        - args:
+            - --transaction-isolation=READ-COMMITTED
+            - --binlog-format=ROW
+          env:
+            - name: MYSQL_DATABASE
+              value: nextcloud
+          envFrom:
+          - secretRef:
+              name: db
+          image: mariadb
+          name: db
+          resources:
+            limits:
+              cpu: '200m'
+              memory: '200Mi'
+            requests:
+              cpu: '100m'
+              memory: '100Mi'
+          volumeMounts:
+            - mountPath: /var/lib/mysql
+              name: db
+      restartPolicy: Always
+      volumes:
+        - name: db
+          persistentVolumeClaim:
+            claimName: db
+status: {}

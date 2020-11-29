@@ -1,0 +1,13 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: echoserver
+spec:
+  rules:
+  - host: echoserver.subku.be
+    http:
+      paths:
+      - backend:
+          serviceName: echoserver
+          servicePort: 8080
+        path: /

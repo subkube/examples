@@ -1,0 +1,20 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    # add an annotation indicating the issuer to use.
+    cert-manager.io/issuer: letsencrypt-staging
+  name: echoserver
+spec:
+  rules:
+  - host: echoserver.subku.be
+    http:
+      paths:
+      - backend:
+          serviceName: echoserver
+          servicePort: 8080
+        path: /
+  tls: # < placing a host in the TLS config will indicate a certificate should be created
+  - hosts:
+    - echoserver.subku.be
+    secretName: echoserver-cert
